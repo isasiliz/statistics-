@@ -1,13 +1,13 @@
 const Routes = require('express')
 const routes = Routes()
-const {userGet, userPost, userPut, userDelete} = require ('../Controllers/users_controller')
+const { getUser, createUser, updateUser, deleteUser } = require ('../Controllers/users_controller')
 
-routes.get('/users', userGet)
+routes.get('/user', getUser)
 
-routes.post('/users', userPost) 
+routes.post('/user', createUser) 
 
-routes.put('/users', userPut)
+routes.put('/user', updateUser)
 
-routes.delete('/users',userDelete)
+routes.delete('/user', deleteUser)
    
   module.exports = routes
