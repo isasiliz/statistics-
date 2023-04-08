@@ -26,7 +26,7 @@ class Server {
 
     async conectarBasedatos() {
         try {
-            await mongoose.connect('mongodb+srv://cafe:csO53O7AqCa2RTWu@cluster0.jfb6n.mongodb.net/test')
+            await mongoose.connect('mongodb+srv://cafe:csO53O7AqCa2RTWu@cluster0.jfb6n.mongodb.net/dbprueba')
             console.log('conecto')
         } catch (error) {
             console.log(error)

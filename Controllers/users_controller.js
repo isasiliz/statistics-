@@ -1,50 +1,71 @@
+const User = require('../Model/user_model')
 
-let users = [
-    {
-      id: 0,
-      displayName: "lizchu",
-      Email: "liz.12@hotmail.com",
-      age: 27,
-    },
-  {
-    id: 1,
-    displayName: "Dieguito",
-    email: "diegol.23@icloud.com",
-    age: 45,
-  }
-  ]
+const getUser = async function (req, res) {
+    try {
 
+        // esto es para ejecutar tareas en diferentes hilos, concurrency.
+        const [users, count] = await Promise.all([
+            await User.find(),
+            await User.countDocuments()     
+        ])
 
-
-const userGet = function (req, res) {
-    res.json( {
-      count: users.length,
-      users: users,
-    })
+        res.json({
+            count: count,
+            data: users
+        })
+        
+    } catch (error) {
+        res.status(500).json(error)
+    }
 }
 
-const userPost = function (req, res) {
+const createUser = async function (req, res) {
+   const body = req.body
+
+   const newUser = User(body)
+
+    try {
+        const userSaved = await newUser.save()
+        res.json(userSaved)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+const updateUser = async function (req, res) {
     const body = req.body
-    users.push (body)
-    res.json("new user is create")  
+    const id = req.query.id
+
+    // es una forma de evitar que se modifiquen ciertos campos como password, etc.
+    const { password, isEnabled, isVerified, role, ...bodyFilter} = body
+
+    //esto es para que el resultado de la modificacion sea el actualizado.
+    const options = {
+        new: true
+    }
+
+    //el trycatch es para el manejo correcto de errores
+    try {
+        // aca modificamos el user con id, y valor bodyfilter.
+        // el await es para que espere una respuesta, necesito hacer que la funcion sea async.
+        const updateUser = await User.findByIdAndUpdate(id, bodyFilter, options)
+
+        //devolvermos el valor moficiado si todo salio bien al cliente(postman).
+        res.json(body)
+    } catch (error) {
+        res.status(500).json(error)
+    }
 }
 
-const userPut = function (req, res) {
-    const query = req.query
-    const body = req.body
-    for (var count = 0;count < users.length; count++) {
-      if  (users[count].id == query.id){
-        users [count] = body
-        }
-    } 
-    res.json('modificado')
+const deleteUser = async function (req, res) {
+   const id = req.query.id
+   
+   try {
+        const deletedUser = await User.findByIdAndDelete(id)
+        res.json(deletedUser)
+   } catch (error) {
+        res.status(500).json(error.message)
+   }
 }
 
-const userDelete = function (req, res) {
-    const query = req.query
-    delete users[query.id];
-    users= users.filter(n=>n)
-  
-    res.json('Metodo DELETE')
-}
-module.exports = {userGet, userPost, userPut, userDelete}
+module.exports = {getUser, createUser, updateUser, deleteUser}
