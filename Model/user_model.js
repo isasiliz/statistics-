@@ -34,5 +34,10 @@ const UserSchema = new Schema({
     },
 
 })
+//es para ocultar contraseñas u otras cosas
+UserSchema.methods.toJSON = function () {
+    const { __v,password,...cleanUser } = this.toObject();
+    return cleanUser
+}
 
 module.exports = model('user', UserSchema)
