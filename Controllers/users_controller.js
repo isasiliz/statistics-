@@ -37,9 +37,10 @@ const createUser = async function (req, res) {
 }
 
 const updateUser = async function (req, res) {
+
     const body = req.body
     const id = req.query.id
-
+    
     // es una forma de evitar que se modifiquen ciertos campos como password, etc.
     const { password, isEnabled, isVerified, role, ...bodyFilter} = body
 
